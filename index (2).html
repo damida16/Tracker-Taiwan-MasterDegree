@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracker Pendaftaran S2 Taiwan — Spring 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E9ECEF;
+  --panel:#FFFFFF;
+  --ink:#14181F;
+  --muted:#6B7280;
+  --faint:#9AA3AE;
+  --line:#CDD3DA;
+  --litho:#F2C200;
+  --litho-soft:#FFF4CC;
+  --copper:#B4552A;
+  --copper-soft:#F7E3D9;
+  --ok:#2F7A4F;
+  --display:"IBM Plex Sans Condensed",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:15px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 64px}
+
+/* ---------- header ---------- */
+header{padding:8px 0 18px;border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 6px
+}
+h1{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(26px,6vw,40px);line-height:1.02;
+  letter-spacing:-.015em;margin:0;text-transform:uppercase;
+}
+h1 .hl{background:linear-gradient(transparent 62%,var(--litho) 62%)}
+.today{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:10px}
+
+/* ---------- timeline ---------- */
+.ruler-block{margin:26px 0 30px}
+.ruler-title{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:18px
+}
+.ruler{position:relative}
+.ruler-line{position:absolute;top:26px;left:0;right:0;height:2px;background:var(--line)}
+.ruler-fill{position:absolute;top:26px;left:0;height:2px;background:var(--ink)}
+.tick{position:absolute;top:0;width:0}
+.tick .dot{
+  position:absolute;top:21px;left:0;transform:translateX(-50%);
+  width:11px;height:11px;background:var(--panel);border:2px solid var(--ink);border-radius:50%
+}
+.tick.urgent .dot{background:var(--copper);border-color:var(--copper)}
+.tick .stem{position:absolute;top:33px;left:0;width:1px;background:var(--line)}
+.tick .box{position:absolute;left:0;transform:translateX(-50%);width:80px;text-align:center}
+.tick .lbl{font-family:var(--display);font-weight:700;font-size:12px;letter-spacing:.03em;text-transform:uppercase;line-height:1.15}
+.tick .day{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px}
+.tick.urgent .day{color:var(--copper);font-weight:600}
+.now{position:absolute;top:14px;height:26px;width:2px;background:var(--copper)}
+.now span{
+  position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--copper);white-space:nowrap
+}
+
+/* ---------- announcement rail ---------- */
+.ann{margin:0 0 30px;padding:0;list-style:none;border-top:1px solid var(--line)}
+.ann li{display:grid;grid-template-columns:104px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.ann .when{font-family:var(--mono);font-size:12px;font-weight:600}
+.ann .when.est{color:var(--muted);font-weight:400}
+.ann .who{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.03em;text-transform:uppercase}
+.ann .why{font-size:12.5px;color:var(--muted);margin-top:2px}
+.ann .est-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;background:var(--bg);color:var(--muted);padding:2px 5px;margin-left:7px;vertical-align:1px}
+.ann li.gone .who{text-decoration:line-through;color:var(--faint)}
+.ann li.gone{opacity:.5}
+
+/* ---------- dropped school ---------- */
+.card.dropped{opacity:.6;border-left:4px solid var(--faint)}
+.card.dropped .school{text-decoration:line-through;text-decoration-thickness:2px}
+.card.dropped .dcount{color:var(--faint)}
+.drop-badge{
+  display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--ink);color:var(--panel);padding:3px 7px;margin-left:9px;vertical-align:3px
+}
+.cardfoot{
+  border-top:1px solid var(--line);padding:12px 18px;
+  display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap
+}
+.cardfoot p{margin:0;font-size:12.5px;color:var(--muted);flex:1;min-width:200px}
+button.mini{
+  appearance:none;font-family:var(--display);font-weight:600;font-size:12px;letter-spacing:.05em;
+  text-transform:uppercase;padding:7px 12px;border:1.5px solid var(--muted);
+  background:var(--panel);color:var(--muted);cursor:pointer;white-space:nowrap
+}
+button.mini:hover{border-color:var(--ink);color:var(--ink)}
+button.mini:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+button.mini.undo{border-color:var(--ink);color:var(--ink)}
+button.mini.undo:hover{background:var(--litho)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--line)}
+.tab{
+  appearance:none;background:none;border:0;border-bottom:3px solid transparent;
+  font-family:var(--display);font-weight:600;font-size:14px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);padding:10px 16px;cursor:pointer
+}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--litho)}
+.tab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ---------- school card ---------- */
+.card{background:var(--panel);border:1px solid var(--line);margin-bottom:12px}
+.card.urgent{border-left:4px solid var(--copper)}
+.card-head{
+  width:100%;appearance:none;background:none;border:0;text-align:left;
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  padding:16px 18px;cursor:pointer;font:inherit;color:inherit
+}
+.card-head:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.school{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em;text-transform:uppercase;line-height:1.1}
+.prog-name{font-size:13px;color:var(--muted);margin-top:2px}
+.meta{text-align:right;white-space:nowrap}
+.dcount{font-family:var(--mono);font-size:19px;font-weight:600;line-height:1.1}
+.dcount.urgent{color:var(--copper)}
+.dcount.none{color:var(--faint);font-size:13px}
+.ddate{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+
+/* die grid = signature */
+.diebar{display:flex;align-items:center;gap:12px;padding:0 18px 16px}
+.dies{display:flex;flex-wrap:wrap;gap:3px;flex:1}
+.die{width:13px;height:13px;background:var(--bg);border:1px solid var(--line)}
+.die.on{background:var(--litho);border-color:#D6AC00}
+.ratio{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+
+.items{border-top:1px solid var(--line);display:none}
+.card.open .items{display:block}
+
+.group{
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);background:var(--bg);padding:8px 18px;border-bottom:1px solid var(--line)
+}
+.item{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:13px 18px;border-bottom:1px solid #EDF0F3}
+.item:last-child{border-bottom:0}
+.item.done .label{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.item.na{opacity:.5}
+input[type=checkbox]{
+  appearance:none;width:20px;height:20px;margin:2px 0 0;flex:none;
+  border:2px solid var(--ink);background:var(--panel);cursor:pointer;position:relative
+}
+input[type=checkbox]:checked{background:var(--litho);border-color:#D6AC00}
+input[type=checkbox]:checked::after{
+  content:"";position:absolute;left:5px;top:1px;width:5px;height:11px;
+  border:solid var(--ink);border-width:0 2.5px 2.5px 0;transform:rotate(42deg)
+}
+input[type=checkbox]:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+input[type=checkbox]:disabled{cursor:not-allowed;border-color:var(--faint)}
+.label{font-weight:500}
+.tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 6px;margin-left:8px;vertical-align:2px;white-space:nowrap
+}
+.tag.w{background:var(--copper-soft);color:var(--copper)}
+.tag.o{background:var(--bg);color:var(--muted)}
+.tag.n{background:var(--bg);color:var(--faint)}
+.hint{font-size:13px;color:var(--muted);margin-top:5px}
+.hint b{color:var(--ink);font-weight:600}
+.note{
+  width:100%;margin-top:8px;font-family:var(--mono);font-size:12px;
+  padding:7px 9px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical
+}
+.note:focus{outline:2px solid var(--litho);outline-offset:-1px;background:var(--panel)}
+
+/* ---------- doc bank ---------- */
+.tablewrap{background:var(--panel);border:1px solid var(--line);overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+th,td{padding:10px 12px;border-bottom:1px solid #EDF0F3;text-align:left;vertical-align:top}
+th{
+  font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);background:var(--bg);position:sticky;top:0;border-bottom:1px solid var(--line)
+}
+td.c{text-align:center;font-family:var(--mono);font-size:12px;white-space:nowrap}
+td.doc{font-weight:600}
+.no{color:var(--faint)}
+.chk{color:var(--copper);font-weight:600}
+
+/* ---------- footer ---------- */
+footer{margin-top:30px;padding-top:18px;border-top:1px solid var(--line)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+button.act{
+  appearance:none;font-family:var(--display);font-weight:600;font-size:13px;
+  letter-spacing:.05em;text-transform:uppercase;padding:9px 14px;
+  border:1.5px solid var(--ink);background:var(--panel);color:var(--ink);cursor:pointer
+}
+button.act:hover{background:var(--litho)}
+button.act:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+button.act.warn{border-color:var(--copper);color:var(--copper)}
+button.act.warn:hover{background:var(--copper-soft)}
+.fine{font-size:12px;color:var(--muted);line-height:1.6}
+.status{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  min-height:16px;margin-bottom:10px
+}
+.warnbox{
+  background:var(--litho-soft);border-left:3px solid var(--litho);
+  padding:10px 13px;font-size:13px;margin-bottom:16px
+}
+@media (max-width:560px){
+  .tick{width:60px}
+  .tick .lbl{font-size:11px}
+  .card-head{padding:14px}
+  .diebar{padding:0 14px 14px}
+  .item{padding:12px 14px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .card{transition:border-color .15s}
+  button.act,input[type=checkbox]{transition:background .12s}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Semiconductor · Intake Spring 2027</p>
+  <h1>Tracker<br><span class="hl">Pendaftaran</span> S2 Taiwan</h1>
+  <p class="today" id="todayLine"></p>
+</header>
+
+<section class="ruler-block">
+  <p class="ruler-title">Deadline yang tersisa</p>
+  <div class="ruler" id="ruler"></div>
+</section>
+
+<section>
+  <p class="ruler-title">Perkiraan pengumuman hasil</p>
+  <ul class="ann" id="annList"></ul>
+</section>
+
+<div class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" data-view="kampus">Kampus</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="dokumen">Bank Dokumen</button>
+</div>
+
+<div id="viewKampus"></div>
+
+<div id="viewDokumen" hidden>
+  <div class="warnbox">Satu berkas bisa dipakai di beberapa kampus. Kolom <b>Cek</b> berarti belum terkonfirmasi — tanyakan ke panitia, jangan diasumsikan.</div>
+  <div class="tablewrap"><table id="bankTable"></table></div>
+</div>
+
+<footer>
+  <p class="status" id="status"></p>
+  <div class="actions">
+    <button class="act" id="btnExport">Simpan cadangan</button>
+    <button class="act" id="btnImport">Muat cadangan</button>
+    <button class="act warn" id="btnReset">Kosongkan semua centang</button>
+    <input type="file" id="fileInput" accept="application/json" hidden>
+  </div>
+  <p class="fine">
+    Centangan tersimpan di browser ini saja — HP dan laptop tidak otomatis sinkron.
+    Kalau mau pindah perangkat, pakai <b>Simpan cadangan</b> lalu <b>Muat cadangan</b> di perangkat satunya.
+  </p>
+</footer>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------------- data ---------------- */
+const W="wajib", O="opsional", N="na";
+
+const SCHOOLS=[
+ {id:"ntust", name:"NTUST", prog:"Advanced Semiconductor Technology (Master)",
+  deadline:"2026-09-11T12:00:00+08:00", deadlineLabel:"11 Sep 2026 \u00b7 12:00 siang",
+  announce:{d:"2026-10-30",lbl:"30 Okt 2026",sure:true,note:"Hasil tahap 1. Balas kesediaan masuk 30 Okt \u2013 6 Nov, hasil beasiswa 6 Nov."},
+  groups:[
+   {t:"Qualification Evaluation", items:[
+    {id:"q1",l:"Ijazah asli UKRIDA",r:W,done:true,h:"Sudah ter-upload 30 Agu 2026."},
+    {id:"q2",l:"Transkrip asli / grade report",r:W,done:true,h:"Sudah ter-upload. Harus memuat semua mata kuliah dan nilai tiap semester."},
+    {id:"q3",l:"Paspor",r:W,done:true,h:"Sudah ter-upload."},
+    {id:"q4",l:"Financial Statement Declaration",r:W,h:"Template diunduh dari sistem, diisi, ditandatangani, lalu di-upload. Di tahap ini <b>rekening korannya belum diminta</b> — baru diminta kalau lolos tahap 1 dan tidak dapat beasiswa (min. US$4.000, statement 6 bulan terakhir, bahasa Inggris, dari bank)."}
+   ]},
+   {t:"Dokumen program", items:[
+    {id:"p1",l:"Curriculum Vitae",r:W,h:"Belum di-upload. CV yang sama bisa dipakai untuk Taipei Tech."},
+    {id:"p2",l:"Sertifikat kemampuan bahasa",r:W,done:true,h:"TOEFL ITP 667 — sudah ter-upload."},
+    {id:"p3",l:"Study plan",r:W,h:"Cek tombol Note di sistem untuk format yang diminta."},
+    {id:"p4",l:"Student Advisor Intention Letter",r:W,h:"<b>Prioritas nomor satu.</b> Butuh tanda tangan calon pembimbing. Email semua dosen semiconductor NTUST hari ini — satu per satu, bukan CC massal, dan ganti bagian riset sesuai bidang tiap dosen. Institutnya kecil, mereka saling kenal. Lampirkan CV + study plan + template. Follow up kalau 3 hari tak dibalas."},
+    {id:"p5",l:"Past employment",r:O,h:"Sangat layak diisi: WeesWares + Sangfor. Ini pembeda dari pelamar fresh graduate."},
+    {id:"p6",l:"Dokumen bermanfaat lainnya",r:O,h:"2 publikasi JISIS, HAKI, Magna Cum Laude, Top 3 Graduate."}
+   ]},
+   {t:"Langkah sistem", items:[
+    {id:"s1",l:"Step 2 — surat rekomendasi (1 buah)",r:W,h:"Program ini cukup <b>1 surat</b>, bukan 2. Sistem mengirim email ke rekomender setelah datanya kamu isi. Aplikasi dianggap tidak lengkap kalau belum masuk sampai deadline."},
+    {id:"s2",l:"Bayar biaya pendaftaran US$30 / NT$1.000",r:W,h:"<b>Gampang terlewat.</b> Aplikasi dibatalkan kalau dokumen, rekomendasi, atau pembayaran belum lengkap. Per jurusan, tidak bisa dikembalikan. Kartu kredit paling cepat — transfer internasional makan beberapa hari kerja."},
+    {id:"s3",l:"Semua file PDF, maks 5 MB, digabung jadi satu",r:W,h:"Aturan tertulis di halaman upload."},
+    {id:"s4",l:"Step 4 — Submit",r:W,h:"Tutup <b>jam 12:00 siang</b> waktu Taiwan, bukan tengah malam. Itu jam 11:00 WIB."}
+   ]}
+  ]},
+
+ {id:"ncku", name:"NCKU", prog:"Academy of Innovative Semiconductor & Sustainable Mfg",
+  deadline:"2026-09-15T23:59:00+08:00", deadlineLabel:"15 Sep 2026",
+  announce:{d:"2026-11-30",lbl:"30 Nov 2026",sure:true,note:"Hasil penerimaan sekaligus beasiswa. Surat penerimaan dikirim pertengahan Desember."},
+  groups:[
+   {t:"Dokumen wajib", items:[
+    {id:"d1",l:"Formulir aplikasi online",r:W,h:"Daftar akun <b>hanya satu</b>. Lebih dari satu akun = aplikasi tidak sah."},
+    {id:"d2",l:"Declaration",r:W,h:"Form dari NCKU, isi + tanda tangan + scan PDF."},
+    {id:"d3",l:"Ijazah S1 UKRIDA",r:W,h:"File yang sama dengan yang sudah di-upload di Taipei Tech & NTUST."},
+    {id:"d4",l:"Transkrip resmi per tahun",r:W,h:"<b>Paling lama — urus duluan.</b> Harus dilegalisir KDEI Taipei di Jakarta atau notaris yang diakui MOFA ROC. NCKU berhak minta versi terverifikasi."},
+    {id:"d5",l:"Financial statement min. NT$120.000",r:W,h:"Sekitar US$4.000, harus menunjukkan dana cukup untuk seluruh masa studi."},
+    {id:"d5a",l:"Surat pernyataan sponsor",r:O,h:"Hanya kalau rekening bukan atas namamu. Butuh tanda tangan sponsor + pernyataan hubungan dan tanggung jawab biaya."},
+    {id:"d6",l:"Dua surat rekomendasi",r:W,h:"Lewat sistem online. Email ke rekomender baru terkirim <b>setelah</b> aplikasi disubmit — jangan submit mepet deadline. Marcel & Cynthia Hayat."},
+    {id:"d7",l:"KTP dan/atau paspor",r:W,h:"ARC dan sertifikat Non-Household Registration hanya kalau punya — kamu tidak, jadi cukup paspor."},
+    {id:"d8",l:"Study plan",r:W,h:"Sesuaikan ke NCKU. Jangan copy-paste study plan NYCU mentah-mentah."},
+    {id:"d9",l:"Autobiography",r:W,h:"Berbeda dari study plan: ini cerita perjalanan diri. Bisa dipakai ulang untuk NTU."},
+    {id:"d10",l:"Tesis / publikasi akademik",r:N,h:"Ditandai untuk pelamar PhD. Kamu master, jadi N/A — tapi publikasi JISIS bisa dilampirkan di poin 12."},
+    {id:"d11",l:"Sertifikat kemampuan bahasa",r:W,h:"TOEFL ITP 667, jauh di atas syarat umum."},
+    {id:"d12",l:"Syarat tambahan dari jurusan",r:O,h:"Cek Admission Prospectus per jurusan — bisa ada tes atau wawancara tambahan. Di sini juga tempat melampirkan CV & publikasi."},
+    {id:"d13",l:"Biaya pendaftaran NT$2.000",r:W,h:"Per pelamar, boleh memilih sampai <b>3 jurusan</b> sekaligus. Tidak bisa dikembalikan."}
+   ]},
+   {t:"Langkah akhir", items:[
+    {id:"f1",l:"Semua file PDF dan sudah dicek isinya",r:W,h:"Dokumen tidak lengkap langsung dianggap tidak memenuhi syarat."},
+    {id:"f2",l:"Submit sebelum 15 September 2026",r:W,h:"Setelah submit, data dan pilihan jurusan <b>tidak bisa diubah lagi</b>."},
+    {id:"f3",l:"Pastikan kedua rekomender sudah mengisi",r:W,h:"Rekomendasi belum masuk = aplikasi tidak lengkap."}
+   ]}
+  ]},
+
+ {id:"ntu", name:"NTU", prog:"Graduate School of Advanced Technology",
+  deadline:"2026-09-17T16:00:00+08:00", deadlineLabel:"17 Sep 2026 \u00b7 16:00",
+  announce:{d:"2026-11-10",lbl:"10 Nov 2026",sure:true,note:"Hasil penerimaan sekaligus beasiswa. Batas balas 17 Nov 2026."},
+  groups:[
+   {t:"Dokumen wajib", items:[
+    {id:"n1",l:"Paspor atau kartu identitas",r:W,h:"Scan yang sama dengan kampus lain."},
+    {id:"n2",l:"Alien Resident Certificate (ARC)",r:N,h:"Hanya untuk yang sudah tinggal di Taiwan."},
+    {id:"n3",l:"Ijazah — asli DAN terjemahan",r:W,h:"NTU minta <b>dua versi</b>: asli + terjemahan resmi bahasa Inggris. Taipei Tech dan NTUST cukup satu."},
+    {id:"n4",l:"Transkrip — asli DAN terjemahan",r:W,h:"Harus memuat nilai tiap tahun <b>plus penjelasan sistem penilaian</b> (keterangan skala IPK dari UKRIDA). Ini khas NTU — minta suratnya ke bagian akademik sekarang, butuh beberapa hari kerja."},
+    {id:"n5",l:"Financial statement",r:W,h:"Nominalnya belum terkonfirmasi — ada di Admission Guidelines 2027 February Entry, halaman 6. Sambil menunggu, siapkan sekitar NT$200.000 supaya satu dokumen cukup untuk semua kampus."},
+    {id:"n6",l:"Short autobiography",r:W,h:"Mirip permintaan NCKU — bisa satu naskah untuk keduanya."},
+    {id:"n7",l:"Personal statement",r:W,h:"<b>Berbeda dari autobiography.</b> Autobiography = riwayat diri; personal statement = alasan dan rencana studi. Jangan diisi teks yang sama."},
+    {id:"n8",l:"Bukti prestasi akademik",r:O,h:"2 publikasi JISIS, HAKI, Magna Cum Laude, Top 3 Graduate."},
+    {id:"n9",l:"Sertifikat kemampuan bahasa",r:W,h:"TOEFL ITP 667."},
+    {id:"n10",l:"Dua surat rekomendasi",r:W,h:"Lewat sistem online. <b>Tombol submit terkunci</b> sampai jumlah minimum surat masuk — ini yang paling sering bikin orang gagal submit di hari terakhir."}
+   ]},
+   {t:"Syarat tingkat universitas", items:[
+    {id:"u1",l:"Pasfoto",r:W,h:"Foto formal latar polos."},
+    {id:"u2",l:"Declaration and Authorization Form",r:W,h:"Form dari NTU."},
+    {id:"u3",l:"Bayar NT$2.000 / US$80 per jurusan",r:W,h:"Sistem membuat formulir pembayaran otomatis. Bayar via transfer bank atau kartu kredit, lalu <b>unggah buktinya</b>. Jurusan ke-3 dan seterusnya NT$1.500."}
+   ]},
+   {t:"Langkah akhir", items:[
+    {id:"z1",l:"Cek apakah GSAT mengadakan tes atau wawancara",r:W,h:"Sebagian jurusan NTU mengadakan ujian tulis/lisan. Cek halaman application requirements jurusannya."},
+    {id:"z2",l:"Submit sebelum 17 Sep 2026, 16:00 Taiwan",r:W,h:"Sistem sudah buka sejak 3 Agustus. Boleh memilih sampai 5 jurusan. Pengumuman 10 November, batas balas 17 November."},
+    {id:"z3",l:"Pastikan kedua rekomender sudah mengunggah",r:W,h:"Tombol submit terkunci sampai surat rekomendasi minimum masuk. Ini yang paling sering bikin orang gagal submit di hari terakhir."}
+   ]}
+  ]},
+
+ {id:"ntut", name:"Taipei Tech", prog:"Semiconductor Technology Master",
+  deadline:"2026-09-30T23:55:00+08:00", deadlineLabel:"30 Sep 2026 \u00b7 23:55",
+  announce:{d:"2026-12-20",lbl:"akhir Des 2026",sure:false,note:"Perkiraan \u2014 Taipei Tech tidak menyebut tanggal pasti. Hasil intake Spring dua tahun terakhir keluar 19 dan 23 Desember."},
+  groups:[
+   {t:"Dokumen program", items:[
+    {id:"t1",l:"Ijazah / sertifikat pendidikan tertinggi",r:W,done:true,h:"Sudah ter-upload 30 Agu 2026."},
+    {id:"t2",l:"Transkrip studi sebelumnya",r:W,done:true,h:"Sudah ter-upload."},
+    {id:"t3",l:"Statement of Purpose / Research Plan",r:W,h:"Baca tombol Note dulu — biasanya ada batasan jumlah kata atau halaman."},
+    {id:"t4",l:"Paspor",r:W,done:true,h:"Sudah ter-upload."},
+    {id:"t5",l:"Bukti kemampuan bahasa",r:W,done:true,h:"TOEFL ITP 667 — sudah ter-upload."},
+    {id:"t6",l:"Topik & abstrak tesis master",r:O,h:"Tidak wajib, tapi kalau diisi baik bisa jadi nilai tambah karena menunjukkan arah riset."},
+    {id:"t7",l:"Sertifikat Taiwan Government Scholarship",r:N,h:"Hanya untuk penerima beasiswa MOE Taiwan."},
+    {id:"t8",l:"Dokumen pendukung / prestasi khusus",r:O,h:"Template sudah kamu unduh 30 Agu tapi belum di-upload balik. Cocok untuk publikasi JISIS + HAKI + Top 3 Graduate."},
+    {id:"t9",l:"Curriculum Vitae",r:W,h:"Belum di-upload. Sama dengan CV untuk NTUST."},
+    {id:"t10",l:"Design Portfolio",r:N,h:"Untuk pelamar jurusan desain — tidak relevan."},
+    {id:"t11",l:"Video motivasi & perkenalan diri",r:W,h:"<b>Wajib, dan paling makan waktu.</b> Minimal 1 menit, boleh Inggris/Mandarin. Cara submit: tempel link video di file Word, simpan sebagai PDF, upload PDF-nya. Link mati = dianggap tidak menyerahkan dokumen."},
+    {id:"t12",l:"Bukti dukungan finansial",r:W,h:"Minimal <b>NT$150.000</b> (~US$5.000) — tertinggi di antara semua kampusmu. Statement maksimal 3 bulan terakhir."}
+   ]},
+   {t:"Langkah akhir", items:[
+    {id:"e1",l:"Cek: surat rekomendasi 1 buah",r:O,h:"Admission Handbook menyebut 1 surat wajib untuk master, tapi tidak ada kolomnya di halaman upload. Email intstudy@ntut.edu.tw untuk memastikan — jangan diasumsikan tidak perlu."},
+    {id:"e2",l:"Cek program kedua di sistem",r:W,h:"Halaman upload menulis \u201crequired documents for <b>both programs</b>\u201d. Scroll ke bawah, pastikan checklist program kedua juga penuh."},
+    {id:"e3",l:"Semua file PDF, maks 5 MB",r:W,h:"Aturan tertulis di halaman upload."},
+    {id:"e4",l:"Preview & Submit sebelum 30 Sep 23:55",r:W,h:"Jangan tunggu hari terakhir — server sering penuh."},
+    {id:"e5",l:"Biaya pendaftaran: gratis",r:N,h:"Admission Handbook bagian Application Fee: \u201cNone\u201d. Tidak ada yang perlu dibayar."}
+   ]}
+  ]},
+
+ {id:"nycu", name:"NYCU", prog:"INTENSE Program — sudah submit",
+  deadline:null, deadlineLabel:"Interview \u00b7 Sep\u2013Nov 2026",
+  announce:{d:"2026-12-31",lbl:"31 Des 2026",sure:true,note:"Interview diperkirakan September\u2013November 2026. Halaman resmi ICST masih menulis \u201cMid January 2027\u201d \u2014 kalau tanggalmu dari email panitia, itu yang lebih baru."},
+  groups:[
+   {t:"Sisa pekerjaan", items:[
+    {id:"y1",l:"Siapkan PPT",r:W,h:"Konfirmasi dulu formatnya: durasi, jumlah slide, bahasa, dikirim duluan atau tidak. Jendela interview <b>September\u2013November 2026</b> \u2014 artinya bisa dipanggil bulan ini juga, jangan tunda sampai Oktober."},
+    {id:"y2",l:"Persiapkan interview",r:W,h:"Pengumuman hasil pertengahan Januari 2027, jadi interview kemungkinan November\u2013Desember 2026. Perusahaan mitra ikut menyeleksi — siapkan jawaban posisi mana yang kamu incar."}
+   ]}
+  ]}
+];
+
+const BANK={
+ cols:["Dokumen","NCKU","Taipei Tech","NTUST","NTU","Catatan"],
+ rows:[
+  ["Ijazah S1 UKRIDA","Ya","Ya","Ya","Ya +terj.","Sudah ter-upload di Taipei Tech & NTUST. NTU minta versi asli dan terjemahan resmi."],
+  ["Transkrip nilai UKRIDA","Ya","Ya","Ya","Ya +terj.","NCKU minta legalisir KDEI/notaris. NTU minta asli + terjemahan + penjelasan sistem nilai. Taipei Tech & NTUST cukup versi biasa."],
+  ["Penjelasan sistem penilaian","Tidak","Tidak","Tidak","Ya","Khusus NTU. Surat keterangan skala IPK dari akademik UKRIDA — minta sekarang."],
+  ["Paspor","Ya","Ya","Ya","Ya","Sudah ter-upload di Taipei Tech & NTUST."],
+  ["Sertifikat bahasa (TOEFL ITP 667)","Ya","Ya","Ya","Ya","Sudah ter-upload di Taipei Tech & NTUST."],
+  ["Curriculum Vitae","Cek","Ya","Ya","Cek","Belum di-upload di mana pun. Tidak tercantum eksplisit di NCKU dan NTU — bisa dilampirkan sebagai dokumen pendukung."],
+  ["Study plan / SOP","Ya","Ya","Ya","Ya","NTU menyebutnya personal statement. Isi inti boleh sama, tapi nama kampus, nama lab, dan alasan memilih harus diganti per kampus."],
+  ["Autobiography","Ya","Tidak","Tidak","Ya","NCKU dan NTU sama-sama minta. Satu naskah bisa untuk keduanya."],
+  ["Bukti keuangan","NT$120rb","NT$150rb","Nanti","Cek","Siapkan yang tertinggi supaya satu dokumen cukup. NTUST baru minta setelah lolos tahap 1."],
+  ["Form deklarasi","Ya","Tidak","Ya","Ya","Template beda-beda per kampus, diunduh dari sistem masing-masing. Tidak bisa saling tukar."],
+  ["Surat rekomendasi","Ya (2)","Cek (1)","Ya (1)","Ya (2)","Semua lewat sistem online. Di NTU tombol submit terkunci sampai surat masuk. Kabari Marcel & Cynthia sekaligus untuk semua kampus."],
+  ["Pasfoto","Cek","Cek","Cek","Ya","NTU minta eksplisit. Foto formal latar polos."],
+  ["Video perkenalan diri","Tidak","Ya","Tidak","Tidak","Khusus Taipei Tech, wajib, minimal 1 menit."],
+  ["Advisor Intention Letter","Tidak","Tidak","Ya","Tidak","Khusus NTUST. Butuh tanda tangan calon pembimbing."],
+  ["Publikasi + HAKI","Opsional","Opsional","Opsional","Opsional","Dilampirkan sebagai dokumen pendukung di keempat kampus."],
+  ["Bukti pengalaman kerja","Cek","Opsional","Opsional","Cek","NTUST punya kolom khusus Past employment."],
+  ["Biaya pendaftaran","NT$2.000","Gratis","US$30","NT$2.000","NCKU untuk sampai 3 jurusan. NTU dan NTUST per jurusan. Total sekitar NT$5.000."]
+ ]
+};
+
+/* ---------------- state ---------------- */
+const KEY="tracker-taiwan-2027";
+let state={done:{},notes:{},dropped:{}};
+let memoryOnly=false;
+
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){const p=JSON.parse(raw);state.done=p.done||{};state.notes=p.notes||{};state.dropped=p.dropped||{};return;}
+  }catch(e){ memoryOnly=true; }
+  // first run: seed from the preset done flags
+  SCHOOLS.forEach(s=>s.groups.forEach(g=>g.items.forEach(it=>{
+    if(it.done) state.done[s.id+"."+it.id]=true;
+  })));
+}
+function save(){
+  try{ localStorage.setItem(KEY,JSON.stringify(state)); }
+  catch(e){ memoryOnly=true; }
+  renderStatus();
+}
+function renderStatus(){
+  const el=document.getElementById("status");
+  el.textContent = memoryOnly
+    ? "Penyimpanan browser tidak aktif di sini — centangan hilang kalau halaman ditutup. Di GitHub Pages nanti tersimpan normal."
+    : "Tersimpan otomatis di browser ini.";
+}
+
+/* ---------------- helpers ---------------- */
+const DAY=86400000;
+function daysLeft(iso){
+  if(!iso) return null;
+  const d=new Date(iso), n=new Date();
+  const a=Date.UTC(n.getFullYear(),n.getMonth(),n.getDate());
+  const b=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  return Math.round((b-a)/DAY);
+}
+function dayLabel(d){ return d===null?"\u2014":(d<0?"lewat":"H-"+d); }
+function counts(school){
+  let total=0,done=0;
+  school.groups.forEach(g=>g.items.forEach(it=>{
+    if(it.r!==W) return;
+    total++;
+    if(state.done[school.id+"."+it.id]) done++;
+  }));
+  return {total,done};
+}
+
+/* ---------------- render: timeline ---------------- */
+function renderRuler(){
+  const el=document.getElementById("ruler");
+  const live=SCHOOLS.filter(s=>!state.dropped[s.id]);
+  const marks=live.filter(s=>s.deadline)
+    .map(s=>({name:s.name,t:new Date(s.deadline).getTime(),d:daysLeft(s.deadline)}));
+  if(!marks.length){
+    el.style.height="auto";
+    el.innerHTML='<p class="fine">Tidak ada deadline aktif yang tersisa.</p>';return;
+  }
+
+  const now=Date.now();
+  const all=[now,...marks.map(m=>m.t)];
+  const start=Math.min(...all)-2*DAY, end=Math.max(...all)+2*DAY;
+  const pos=t=>12+76*((t-start)/(end-start));
+  const clamp=v=>Math.min(100,Math.max(0,v));
+
+  // susun label berlapis supaya tidak saling menimpa
+  const W_LABEL=84, w=el.clientWidth||340;
+  const gap=(W_LABEL/w)*100;
+  const labels=marks.map(m=>({...m,x:pos(m.t)})).sort((a,b)=>a.x-b.x);
+  const laneEnd=[];
+  labels.forEach(L=>{
+    let lane=0;
+    while(laneEnd[lane]!==undefined && L.x-laneEnd[lane]<gap) lane++;
+    laneEnd[lane]=L.x; L.lane=lane;
+  });
+  const lanes=laneEnd.length;
+  el.style.height=(46+lanes*42)+"px";
+
+  const nowPct=clamp(pos(now));
+  let html='<div class="ruler-line"></div>';
+  html+=`<div class="ruler-fill" style="width:${nowPct}%"></div>`;
+  labels.forEach(L=>{
+    const top=40+L.lane*42, stem=top-33;
+    const urgent=L.d<=14;
+    html+=`<div class="tick${urgent?" urgent":""}" style="left:${clamp(L.x)}%">
+      <div class="dot"></div>
+      <div class="stem" style="height:${stem}px"></div>
+      <div class="box" style="top:${top}px">
+        <div class="lbl">${L.name}</div>
+        <div class="day">${dayLabel(L.d)}</div>
+      </div></div>`;
+  });
+  html+=`<div class="now" style="left:${nowPct}%"><span>hari ini</span></div>`;
+  el.innerHTML=html;
+}
+
+let rzTimer;
+window.addEventListener("resize",()=>{clearTimeout(rzTimer);rzTimer=setTimeout(renderRuler,150);});
+
+/* ---------------- render: announcements ---------------- */
+function renderAnnouncements(){
+  const el=document.getElementById("annList");
+  el.innerHTML=[...SCHOOLS]
+    .sort((a,b)=>new Date(a.announce.d)-new Date(b.announce.d))
+    .map(s=>{
+      const gone=!!state.dropped[s.id];
+      return `<li class="${gone?"gone":""}">
+        <span class="when ${s.announce.sure?"":"est"}">${s.announce.lbl}</span>
+        <span><span class="who">${s.name}</span>${s.announce.sure?"":'<span class="est-tag">perkiraan</span>'}
+        <div class="why">${gone?"Dicoret \u2014 tidak menunggu hasil ini lagi.":s.announce.note}</div></span>
+      </li>`;
+    }).join("");
+}
+
+/* ---------------- render: schools ---------------- */
+function paintBar(bar,total,done){
+  bar.innerHTML=`<div class="dies">${
+    Array.from({length:total},(_,i)=>`<span class="die${i<done?" on":""}"></span>`).join("")
+  }</div><span class="ratio">${done}/${total} wajib</span>`;
+}
+function refreshProgress(school,card){
+  const {total,done}=counts(school);
+  paintBar(card.querySelector(".diebar"),total,done);
+}
+
+function renderSchools(){
+  const wrap=document.getElementById("viewKampus");
+  wrap.innerHTML="";
+  const ordered=[...SCHOOLS].sort((a,b)=>{
+    const da=!!state.dropped[a.id], db=!!state.dropped[b.id];
+    if(da!==db) return da?1:-1;                 // yang dicoret turun ke bawah
+    if(!a.deadline) return 1; if(!b.deadline) return -1;
+    return new Date(a.deadline)-new Date(b.deadline);
+  });
+
+  ordered.forEach(s=>{
+    const {total,done}=counts(s);
+    const d=daysLeft(s.deadline);
+    const urgent=d!==null&&d<=14;
+
+    const gone=!!state.dropped[s.id];
+    const card=document.createElement("section");
+    card.className="card"+(gone?" dropped":(urgent?" urgent":""));
+
+    const head=document.createElement("button");
+    head.className="card-head";
+    head.setAttribute("aria-expanded","false");
+    head.innerHTML=`<div>
+        <div class="school">${s.name}${gone?'<span class="drop-badge">dicoret</span>':""}</div>
+        <div class="prog-name">${s.prog}</div>
+      </div>
+      <div class="meta">
+        <div class="dcount ${gone?"none":(d===null?"none":(urgent?"urgent":""))}">${gone?"\u2014":dayLabel(d)}</div>
+        <div class="ddate">${gone?"tidak dilanjutkan":s.deadlineLabel}</div>
+        <div class="ddate">hasil: ${s.announce.lbl}${s.announce.sure?"":" (perkiraan)"}</div>
+      </div>`;
+    head.addEventListener("click",()=>{
+      const open=card.classList.toggle("open");
+      head.setAttribute("aria-expanded",String(open));
+    });
+    card.appendChild(head);
+
+    const bar=document.createElement("div");
+    bar.className="diebar";
+    card.appendChild(bar);
+    paintBar(bar,total,done);
+
+    const items=document.createElement("div");
+    items.className="items";
+    s.groups.forEach(g=>{
+      const gh=document.createElement("div");
+      gh.className="group";gh.textContent=g.t;
+      items.appendChild(gh);
+      g.items.forEach(it=>{
+        const key=s.id+"."+it.id;
+        const row=document.createElement("div");
+        const isNa=it.r===N;
+        row.className="item"+(state.done[key]?" done":"")+(isNa?" na":"");
+
+        const cb=document.createElement("input");
+        cb.type="checkbox";cb.checked=!!state.done[key];cb.disabled=isNa;
+        cb.id="cb-"+key;
+        cb.addEventListener("change",()=>{
+          if(cb.checked) state.done[key]=true; else delete state.done[key];
+          row.classList.toggle("done",cb.checked);
+          save();refreshProgress(s,card);   // perbarui kartu ini saja, panel tetap terbuka
+        });
+
+        const body=document.createElement("div");
+        const tagCls=it.r===W?"w":(it.r===O?"o":"n");
+        const tagTxt=it.r===W?"wajib":(it.r===O?"opsional":"n/a");
+        body.innerHTML=`<label class="label" for="cb-${key}">${it.l}<span class="tag ${tagCls}">${tagTxt}</span></label>
+          ${it.h?`<div class="hint">${it.h}</div>`:""}`;
+
+        const ta=document.createElement("textarea");
+        ta.className="note";ta.rows=1;ta.placeholder="catatan / tanggal / nama file…";
+        ta.value=state.notes[key]||"";
+        ta.addEventListener("input",()=>{
+          if(ta.value.trim()) state.notes[key]=ta.value; else delete state.notes[key];
+          save();
+        });
+        body.appendChild(ta);
+
+        row.appendChild(cb);row.appendChild(body);
+        items.appendChild(row);
+      });
+    });
+    card.appendChild(items);
+
+    const foot=document.createElement("div");
+    foot.className="cardfoot";
+    const msg=document.createElement("p");
+    const btn=document.createElement("button");
+    btn.className="mini"+(gone?" undo":"");
+    if(gone){
+      msg.textContent="Kampus ini dicoret. Sisanya "+(SCHOOLS.length-Object.keys(state.dropped).length)+" kampus.";
+      btn.textContent="Batalkan pencoretan";
+      btn.addEventListener("click",()=>{ delete state.dropped[s.id]; save(); renderAll(); });
+    }else{
+      msg.textContent = s.id==="ntust"
+        ? "Kalau sampai mendekati 11 September tidak ada dosen yang membalas, coret NTUST supaya tidak ikut dihitung."
+        : "Batal mendaftar ke sini? Coret saja — datanya tetap tersimpan.";
+      btn.textContent="Coret kampus ini";
+      btn.addEventListener("click",()=>{
+        if(!confirm("Coret "+s.name+" dari daftar?\n\nCentangan dan catatanmu tetap tersimpan, dan bisa dibatalkan kapan saja."))return;
+        state.dropped[s.id]=true; save(); renderAll();
+      });
+    }
+    foot.appendChild(msg); foot.appendChild(btn);
+    card.appendChild(foot);
+
+    wrap.appendChild(card);
+  });
+}
+
+/* ---------------- render: doc bank ---------------- */
+function renderBank(){
+  const t=document.getElementById("bankTable");
+  const th="<tr>"+BANK.cols.map(c=>`<th>${c}</th>`).join("")+"</tr>";
+  const body=BANK.rows.map(r=>{
+    const cells=r.map((v,i)=>{
+      if(i===0) return `<td class="doc">${v}</td>`;
+      if(i===5) return `<td>${v}</td>`;
+      const cls=v==="Tidak"?"no":(String(v).startsWith("Cek")?"chk":"");
+      return `<td class="c ${cls}">${v}</td>`;
+    }).join("");
+    return `<tr>${cells}</tr>`;
+  }).join("");
+  t.innerHTML="<thead>"+th+"</thead><tbody>"+body+"</tbody>";
+}
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll(".tab").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected","false"));
+    b.setAttribute("aria-selected","true");
+    const v=b.dataset.view;
+    document.getElementById("viewKampus").hidden=(v!=="kampus");
+    document.getElementById("viewDokumen").hidden=(v!=="dokumen");
+  });
+});
+
+/* ---------------- backup ---------------- */
+document.getElementById("btnExport").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="tracker-taiwan-"+new Date().toISOString().slice(0,10)+".json";
+  a.click();URL.revokeObjectURL(a.href);
+});
+document.getElementById("btnImport").addEventListener("click",()=>document.getElementById("fileInput").click());
+document.getElementById("fileInput").addEventListener("change",ev=>{
+  const f=ev.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const p=JSON.parse(rd.result);
+      state.done=p.done||{};state.notes=p.notes||{};state.dropped=p.dropped||{};
+      save();renderAll();
+      document.getElementById("status").textContent="Cadangan berhasil dimuat.";
+    }catch(e){
+      document.getElementById("status").textContent="File itu tidak terbaca. Pilih file .json hasil Simpan cadangan.";
+    }
+  };
+  rd.readAsText(f);ev.target.value="";
+});
+document.getElementById("btnReset").addEventListener("click",()=>{
+  if(!confirm("Kosongkan semua centang dan catatan? Tidak bisa dibatalkan."))return;
+  state={done:{},notes:{},dropped:{}};save();renderAll();
+});
+
+/* ---------------- boot ---------------- */
+load();
+document.getElementById("todayLine").textContent=
+  new Date().toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+function renderAll(){ renderRuler(); renderAnnouncements(); renderSchools(); }
+renderAll();renderBank();renderStatus();
+setInterval(()=>{renderRuler();renderAnnouncements();},60*60*1000);
+</script>
+</body>
+</html>
